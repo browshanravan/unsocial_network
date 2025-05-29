@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from scipy import stats
 import sys
 
@@ -67,7 +69,7 @@ class DigiScape:
             openness=  [np.float64(1) if x > np.float64(1) else x for x in [np.abs(np.random.normal(loc=0.5, scale=0.1))]][0]  #0 (close minded), 1 (open minded)
             stubbornness= [np.float64(1) if x > np.float64(1) else x for x in [np.float64(1) - stats.expon.rvs(loc=0, scale=0.2)]][0] #most people resist change (openness modifier). 1 is high resistance. Negative skewness.
             influence_strength= [np.float64(1) if x > np.float64(1) else x for x in [stats.expon.rvs(loc=0, scale=0.2)]][0] #most people not influential. 0 is no influence strength. Positive skewness.
-            group_id= np.random.choice(["L", "R"])
+            group_id= np.random.choice(["Left", "Right", "Center"])
             ingroup_trust_weight= [np.float64(1) if x > np.float64(1) else x for x in [np.float64(1) - stats.expon.rvs(loc= 0, scale=0.2)]][0] #most people weight their ingroup highly. mostly close to 1
             outgroup_trust_weight= [np.float64(1) if x > np.float64(1) else x for x in [stats.expon.rvs(loc= 0, scale=0.2)]][0] #most people weight their ingroup poorly. mostly close to 0
             
@@ -125,3 +127,33 @@ class DigiScape:
 
         else:
             sys.exit("Please enter a 0 or above intiger value")
+
+
+        
+    # def process_data_for_plot(self):
+    #     dataset=[]
+    #     for i in self.digizen_timeline:
+    #         df= pd.DataFrame(i['cohort_output'])
+    #         df["time_point"]= i['time_point']
+    #         dataset.append(df)
+
+    #     df= pd.concat(dataset).reset_index(drop=True)
+    #     df= df.pivot_table(values="belief", columns= "id", index="time_point", aggfunc="mean")
+    #     df.columns.name= None
+        
+    #     return df
+    
+
+    # def plot_belief_evolution(self):
+    #     df= self.process_data_for_plot()
+    #     for column in df.columns:
+    #         plt.plot(df[column], label= column)
+
+    #     plt.axhline(y=0, color='r', ls='dashed', label="Neutral")
+
+    #     plt.title(f"Evolution of belief")
+    #     plt.xlabel("Group exposure rounds")
+    #     plt.ylabel("support vs oppose")
+
+    #     plt.tight_layout()
+    #     plt.show()
