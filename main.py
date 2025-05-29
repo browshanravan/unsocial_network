@@ -3,10 +3,12 @@ from unsocial_network.src.utils import (
 )
 
 import numpy as np
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
 
-DigiScape(digizen_count=2, time=None).run_simulation()
+digizens= DigiScape(digizen_count=10, time=2).run_simulation()
+print(digizens)
+
+
