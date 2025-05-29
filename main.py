@@ -8,7 +8,14 @@ import matplotlib.pyplot as plt
 
 
 
-digizens= DigiScape(digizen_count=10, time=2).run_simulation()
-print(digizens)
+digizens= DigiScape(digizen_count=10, time=3).run_simulation()
+
+
+dataset=[]
+for i in digizens:
+    dataset.extend(i['cohort_output'])
+
+df= pd.DataFrame(dataset)
+print(df)
 
 
