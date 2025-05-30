@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import sys
+import random
 import networkx as nx
 
 
@@ -57,16 +58,19 @@ class DigiSapien:
 
 
 class DigiScape:
-    def __init__(self, digizen_count, neighbor_count=4, number_of_rounds=0, network_type="fully_connected"):
+    def __init__(self, digizen_count, group, neighbor_count=4, network_randomness=0.2, number_of_rounds=0, network_type="fully_connected"):
         self.digizen_count= digizen_count
         self.number_of_rounds= number_of_rounds
+        self.group= group
         self.digizen_pool= []
         self.digizen_snapshot= []
         self.digizen_timeline= []
         if network_type == "fully_connected":
             self.network = nx.complete_graph(n= digizen_count)
         elif network_type == "small_world":
-            self.network = nx.watts_strogatz_graph(n=digizen_count, k=neighbor_count, p=0.2)
+            self.network = nx.watts_strogatz_graph(n=digizen_count, k=neighbor_count, p=network_randomness)
+        elif network_type == "scale_free":
+            self.network = nx.barabasi_albert_graph(n=digizen_count, m=neighbor_count)
         else:
             sys.exit("Please select one of the provided network types")
     
@@ -79,7 +83,7 @@ class DigiScape:
             openness=  [np.float64(1) if x > np.float64(1) else x for x in [np.abs(np.random.normal(loc=0.5, scale=0.1))]][0]  #0 (close minded), 1 (open minded)
             stubbornness= [np.float64(1) if x > np.float64(1) else x for x in [np.float64(1) - stats.expon.rvs(loc=0, scale=0.2)]][0] #most people resist change (openness modifier). 1 is high resistance. Negative skewness.
             influence_strength= [np.float64(1) if x > np.float64(1) else x for x in [stats.expon.rvs(loc=0, scale=0.2)]][0] #most people not influential. 0 is no influence strength. Positive skewness.
-            group_id= np.random.choice(["Left", "Right", "Center"])
+            group_id= np.random.choice(self.group)
             ingroup_trust_weight= [np.float64(1) if x > np.float64(1) else x for x in [np.float64(1) - stats.expon.rvs(loc= 0, scale=0.2)]][0] #most people weight their ingroup highly. mostly close to 1
             outgroup_trust_weight= [np.float64(1) if x > np.float64(1) else x for x in [stats.expon.rvs(loc= 0, scale=0.2)]][0] #most people weight their ingroup poorly. mostly close to 0
             
@@ -135,8 +139,40 @@ class DigiScape:
     
     
     def plot_network(self):
-        node_colors = [self.network.nodes[i]["digizen"].belief for i in self.network.nodes]
-        nx.draw(self.network, node_color=node_colors, cmap="coolwarm", with_labels=False)
+        shape_map= {}
+        group_nodes= {}
+        shape_types= ["o", "v", "s", "p", "D", "h"]
+        for i in self.group:
+            shape= random.choice(shape_types)
+            shape_map[i]= shape
+            group_nodes[i]= []
+            shape_types.remove(shape)
+        
+        for node_id in self.network.nodes:
+            group = self.network.nodes[node_id]["digizen"].group_id
+            group_nodes[group].append(node_id)
+        
+        pos = nx.spring_layout(self.network)
+        
+        for group, nodes in group_nodes.items():
+            node_color= [float(self.network.nodes[i]["digizen"].belief) for i in nodes]
+            nx.draw_networkx_nodes(
+                G= self.network,
+                pos= pos,
+                nodelist=nodes,
+                node_color= node_color,
+                node_shape=shape_map[group],
+                label=group,
+                cmap="coolwarm",
+                alpha=0.95
+                )
+        
+        nx.draw_networkx_edges(
+            G= self.network,
+            pos= pos,
+            alpha=0.3)
+        
+        plt.legend(loc="best")
         plt.tight_layout()
         plt.show()
     
