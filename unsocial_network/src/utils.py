@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
 import pandas as pd
 import numpy as np
 from scipy import stats
@@ -153,6 +155,14 @@ class DigiScape:
             group_nodes[group].append(node_id)
         
         pos = nx.spring_layout(self.network)
+
+        beliefs = [float(self.network.nodes[n]["digizen"].belief) for n in self.network.nodes]
+        cmap = cm.coolwarm
+        vmin= min(beliefs)
+        vmax= max(beliefs)
+        norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
+        sm = cm.ScalarMappable(cmap=cmap, norm=norm)
+        sm.set_array([])
         
         for group, nodes in group_nodes.items():
             node_color= [float(self.network.nodes[i]["digizen"].belief) for i in nodes]
@@ -163,8 +173,10 @@ class DigiScape:
                 node_color= node_color,
                 node_shape=shape_map[group],
                 label=group,
-                cmap="coolwarm",
-                alpha=0.95
+                alpha=0.95,
+                cmap=cmap,
+                vmin=vmin,
+                vmax=vmax,
                 )
         
         nx.draw_networkx_edges(
@@ -172,6 +184,7 @@ class DigiScape:
             pos= pos,
             alpha=0.3)
         
+        plt.colorbar(sm, ax=plt.gca(), label="Belief Strength")
         plt.legend(loc="best")
         plt.tight_layout()
         plt.show()
@@ -194,7 +207,7 @@ class DigiScape:
 
         plt.title(f"Evolution of belief")
         plt.xlabel("Group exposure rounds")
-        plt.ylabel("support vs oppose")
+        plt.ylabel("Belief Strength")
 
         plt.tight_layout()
         plt.show()

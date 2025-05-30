@@ -6,12 +6,12 @@ NETWORK_TYPE= [
     "fully_connected", 
     "small_world", 
     "scale_free",
-    ][2]
+    ][1]
 DIGIZEN_COUNT= 30
 NUMBER_OF_ROUNDS= 100
 NEIGHBOR_COUNT= 4
 NETWORK_RANDOMNESS= 0.2
-GROUPS= ["Left", "Center", "Right"]
+GROUPS= ["Left", "Right"]
 
 digizens= DigiScape(
     network_type= NETWORK_TYPE,
