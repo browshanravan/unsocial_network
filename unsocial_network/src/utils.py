@@ -200,14 +200,23 @@ class DigiScape:
 
     def plot_belief_evolution(self):
         df= self.process_data_for_plot()
+
+        plt.rcParams['axes.spines.left'] = False
+        plt.rcParams['axes.spines.right'] = False
+        plt.rcParams['axes.spines.top'] = False
+        plt.rcParams['axes.spines.bottom'] = False
+        plt.rcParams['xtick.bottom'] = False
+        plt.rcParams['ytick.left'] = False
+
         for column in df.columns:
-            plt.plot(df[column], label= column)
+            plt.plot(df[column])
 
-        plt.axhline(y=0, color='r', ls='dashed', label="Neutral")
+        plt.axhline(y=0, color='r', ls='--', label="Neutral", linewidth=2.5)
 
-        plt.title(f"Evolution of belief")
-        plt.xlabel("Group exposure rounds")
+        plt.title(f"Evolution of Belief")
+        plt.xlabel("Group Interaction Rounds")
         plt.ylabel("Belief Strength")
 
+        plt.legend(loc="best")
         plt.tight_layout()
         plt.show()
