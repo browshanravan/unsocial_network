@@ -2,6 +2,9 @@ from unsocial_network.src.utils import (
     DigiScape
 )
 
+
+##PLEASE CHANGE THE PARAMETERS INSIDE THE HASH BOX BASED ON YOUR SETUP
+###################################################################
 NETWORK_TYPE= [
     "fully_connected", 
     "small_world", 
@@ -12,6 +15,9 @@ NUMBER_OF_ROUNDS= 100
 NEIGHBOR_COUNT= 4
 NETWORK_RANDOMNESS= 0.2
 GROUPS= ["Left", "Right"]
+###################################################################
+
+
 
 digizens= DigiScape(
     network_type= NETWORK_TYPE,
